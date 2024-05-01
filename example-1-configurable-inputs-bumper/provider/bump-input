@@ -36,5 +36,5 @@ else
         --commit-lockfile-summary "[ci]: bumping ${INPUTNAME}"
 fi
 
-echo "✅All done!"
+echo "✅ All done!"
 exit 0
