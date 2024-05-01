@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+#First, make sure we are in a git repo
+(git rev-parse --show-toplevel) || (echo "Not in a git repository" && exit 1)
+
+# Get the input name into a variable
+INPUTNAME=${1}
+
+if [[ $INPUTNAME == "*" ]]; then
+    _BUMP_ALL_INPUTS=1
+else
+    _BUMP_ALL_INPUTS=0
+fi
+
+# Start
+if [[ ${_BUMP_ALL_INPUTS} == 1 ]]; then
+    echo "⬆️ Bumping all inputs"
+else
+    echo "⬆️ Bumping input ${INPUTNAME}"
+fi
+
+# Optional validation -- abort if there's an uncommitted write to flake.lock
+# if [[ $(cd "$GIT_ROOT" && git status --porcelain flake.lock) ]]; then
+#     echo "❌flake.lock has uncommitted changes. Commit before proceeding"
+#     exit 1
+# fi
+echo "❄️ Invoking nix flake command"
+
+if [[ ${_BUMP_ALL_INPUTS} == 1 ]]; then
+    nix flake update \
+        --commit-lock-file \
+        --commit-lockfile-summary "[ci]: bumping all inputs"
+else
+    nix flake lock \
+        --update-input "${INPUTNAME}" \
+        --commit-lock-file \
+        --commit-lockfile-summary "[ci]: bumping ${INPUTNAME}"
+fi
+
+echo "✅All done!"
+exit 0
