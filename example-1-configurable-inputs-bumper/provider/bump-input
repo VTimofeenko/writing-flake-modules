@@ -30,6 +30,8 @@ if [[ ${_BUMP_ALL_INPUTS} == 1 ]]; then
         --commit-lock-file \
         --commit-lockfile-summary "[ci]: bumping all inputs"
 else
+    # NOTE: new-ish `nix` versions will prompt to use `nix flake update $INPUTNAME`
+    # TODO: [24.05]?
     nix flake lock \
         --update-input "${INPUTNAME}" \
         --commit-lock-file \
